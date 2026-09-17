@@ -1,0 +1,501 @@
+<title>Ordena las Letras - Animales</title>
+<style>
+  :root{
+    --bg:#fff5fa;
+    --card:#ffffff;
+    --ink:#4a2b3d;
+    --muted:#a17a8d;
+    --line:#ffd6e8;
+    --primary:#ff6fa3;
+    --primary-dark:#e0488a;
+    --good:#2aab7c;
+    --good-bg:#e0f6ec;
+    --bad:#e2574c;
+    --bad-bg:#fbe4e1;
+    --chip:#ffeef5;
+    --slot:#ffc2dd;
+  }
+  :root:not([data-theme="light"]){
+    @media (prefers-color-scheme: dark){
+      --bg:#2b1a24;
+      --card:#3a2430;
+      --ink:#fbeaf3;
+      --muted:#c9a0b6;
+      --line:#5a3548;
+      --primary:#ff8fc0;
+      --primary-dark:#ffb3d6;
+      --good:#4fd6a2;
+      --good-bg:#173229;
+      --bad:#ff8a80;
+      --bad-bg:#3a2020;
+      --chip:#4a2c3c;
+      --slot:#6b3f56;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#2b1a24;
+    --card:#3a2430;
+    --ink:#fbeaf3;
+    --muted:#c9a0b6;
+    --line:#5a3548;
+    --primary:#ff8fc0;
+    --primary-dark:#ffb3d6;
+    --good:#4fd6a2;
+    --good-bg:#173229;
+    --bad:#ff8a80;
+    --bad-bg:#3a2020;
+    --chip:#4a2c3c;
+    --slot:#6b3f56;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    padding-inline:16px;
+    padding-block:20px;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Nunito',system-ui,sans-serif;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    min-height:100%;
+  }
+  h1{
+    font-family:'Baloo 2','Nunito',sans-serif;
+    font-size:clamp(1.3rem,4vw,1.7rem);
+    color:var(--primary-dark);
+    text-align:center;
+    margin:4px 0 4px;
+    text-wrap:balance;
+  }
+  .subtitle{
+    color:var(--muted);
+    font-size:0.95rem;
+    margin-bottom:16px;
+    text-align:center;
+  }
+  .topbar{
+    width:100%;
+    max-width:560px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-family:'Baloo 2',sans-serif;
+    font-size:1.05rem;
+    color:var(--muted);
+    padding:0 4px;
+    margin-bottom:10px;
+  }
+  .topbar .score{color:var(--good);font-weight:700;}
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:22px;
+    box-shadow:0 10px 30px rgba(40,50,100,0.10);
+    width:100%;
+    max-width:560px;
+    padding:26px 22px;
+    text-align:center;
+  }
+  .imgbox{
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:10px;
+    display:inline-block;
+    background:var(--chip);
+    margin:0 auto 14px;
+  }
+  .imgbox img{
+    max-width:100%;
+    max-height:220px;
+    display:block;
+    border-radius:10px;
+    margin:0 auto;
+  }
+  .hearbox{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+    margin-bottom:22px;
+  }
+  .big-speak-btn{
+    background:var(--chip);
+    border:2px solid var(--line);
+    border-radius:50%;
+    width:74px;
+    height:74px;
+    font-size:2rem;
+    cursor:pointer;
+    color:var(--primary-dark);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:transform .12s ease, border-color .2s ease;
+  }
+  .big-speak-btn:hover{border-color:var(--primary); transform:translateY(-2px);}
+  .hear-hint{
+    color:var(--muted);
+    font-size:0.9rem;
+  }
+  .answer-row{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:6px;
+    min-height:56px;
+    align-items:center;
+    border-bottom:3px solid var(--line);
+    padding-bottom:14px;
+    margin-bottom:20px;
+  }
+  .bank-row{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:6px;
+    margin-bottom:20px;
+    min-height:56px;
+    align-items:center;
+  }
+  .letter{
+    width:44px;
+    height:48px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:10px;
+    border:2px solid var(--line);
+    background:var(--chip);
+    color:var(--ink);
+    font-family:'Baloo 2',sans-serif;
+    font-size:1.3rem;
+    font-weight:700;
+    text-transform:uppercase;
+    cursor:pointer;
+    user-select:none;
+    transition:transform .12s ease, background .2s ease, border-color .2s ease;
+  }
+  .letter:hover{transform:translateY(-2px);}
+  .letter:focus-visible{outline:3px solid var(--primary);outline-offset:2px;}
+  .letter.placed{
+    background:#dfe4ff;
+    border-color:var(--primary);
+  }
+  :root[data-theme="dark"] .letter.placed,
+  :root:not([data-theme="light"]) .letter.placed{
+    background:#333c66;
+  }
+  .letter.correct{
+    background:var(--good-bg);
+    border-color:var(--good);
+    color:var(--good);
+  }
+  .letter.wrong{
+    background:var(--bad-bg);
+    border-color:var(--bad);
+    color:var(--bad);
+  }
+  .slot-empty{
+    width:44px;
+    height:48px;
+    border-radius:10px;
+    border-bottom:3px dashed var(--slot);
+    display:inline-block;
+  }
+  .controls{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:8px;
+    align-items:center;
+  }
+  button.action{
+    padding:11px 22px;
+    border:none;
+    border-radius:12px;
+    font-family:'Baloo 2',sans-serif;
+    font-size:1rem;
+    font-weight:700;
+    cursor:pointer;
+    color:#fff;
+    background:var(--primary);
+  }
+  button.action:hover{background:var(--primary-dark);}
+  button.action.secondary{background:var(--muted);}
+  button.action.secondary:hover{opacity:0.85;}
+  button.action:disabled{background:var(--line);color:var(--muted);cursor:not-allowed;}
+  .feedback{
+    min-height:26px;
+    font-weight:700;
+    margin-bottom:6px;
+  }
+  .feedback.ok{color:var(--good);}
+  .feedback.bad{color:var(--bad);}
+  .navbar{
+    width:100%;
+    max-width:560px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:16px;
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  .navbar button{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:50%;
+    width:46px;
+    height:46px;
+    font-size:1.2rem;
+    cursor:pointer;
+    color:var(--primary-dark);
+  }
+  .navbar button:disabled{opacity:0.3;cursor:not-allowed;}
+  .navbar .progress{
+    font-family:'Baloo 2',sans-serif;
+    font-weight:700;
+    color:var(--muted);
+    font-variant-numeric:tabular-nums;
+  }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+
+<h1>Ordena las Letras</h1>
+<div class="subtitle">Escucha la palabra y ordena las letras para escribir el nombre del animal en ingles</div>
+
+<div class="topbar">
+  <span id="timer">0:00</span>
+  <span class="score">Puntaje: <span id="score">0</span></span>
+</div>
+
+<div class="card" id="card"></div>
+
+<div class="navbar">
+  <button id="prevBtn" title="Anterior" aria-label="Anterior">&#9664;</button>
+  <span class="progress" id="progress">1 de 12</span>
+  <button id="nextBtn" title="Siguiente" aria-label="Siguiente">&#9654;</button>
+</div>
+
+<script>
+const questions = [
+  {word:"PARROT", img:"q01-parrot.png"},
+  {word:"CAT",    img:"q02-cat.png"},
+  {word:"TURTLE", img:"q03-turtle.png"},
+  {word:"SNAKE",  img:"q04-snake.png"},
+  {word:"SPIDER", img:"q05-spider.png"},
+  {word:"MOUSE",  img:"q06-mouse.png"},
+  {word:"RABBIT", img:"q07-rabbit.png"},
+  {word:"DOG",    img:"q08-dog.png"},
+  {word:"FISH",   img:"q09-fish.png"},
+  {word:"PIG",    img:"q10-pig.png"},
+  {word:"FROG",   img:"q11-frog.png"},
+  {word:"PONY",   img:"q12-pony.png"},
+];
+
+let current = 0;
+let totalScore = 0;
+let startTime = Date.now();
+
+const state = questions.map(q => ({
+  bank: shuffle(q.word.split("").map((c,i)=>({letter:c, id:i}))),
+  answer: [],
+  positionScored: new Array(q.word.length).fill(false),
+  bonusGiven: false,
+  solved:false
+}));
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  if(a.every((x,i)=>x.id===i) && a.length>1){
+    [a[0],a[1]]=[a[1],a[0]];
+  }
+  return a;
+}
+
+const cardEl = document.getElementById("card");
+const scoreEl = document.getElementById("score");
+const progressEl = document.getElementById("progress");
+const timerEl = document.getElementById("timer");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+
+function render(){
+  const q = questions[current];
+  progressEl.textContent = (current+1) + " de " + questions.length;
+  prevBtn.disabled = current===0;
+  nextBtn.disabled = current===questions.length-1;
+
+  let html = "";
+  html += '<div class="imgbox"><img src="'+q.img+'" alt="palabra desordenada"></div>';
+  html += '<div class="hearbox"><button class="big-speak-btn" id="speakBtn" title="Escuchar" aria-label="Escuchar palabra">&#128266;</button><div class="hear-hint">Toca para escuchar el animal</div></div>';
+  html += '<div class="answer-row" id="answerRow"></div>';
+  html += '<div class="bank-row" id="bankRow"></div>';
+  html += '<div class="feedback" id="feedback"></div>';
+  html += '<div class="controls">';
+  html += '<button class="action" id="checkBtn">Verificar</button>';
+  html += '<button class="action secondary" id="resetBtn">Reiniciar</button>';
+  html += '</div>';
+  cardEl.innerHTML = html;
+
+  drawAnswer();
+  drawBank();
+
+  document.getElementById("checkBtn").onclick = checkAnswer;
+  document.getElementById("resetBtn").onclick = resetQuestion;
+  document.getElementById("speakBtn").onclick = speakWord;
+}
+
+function drawAnswer(){
+  const st = state[current];
+  const row = document.getElementById("answerRow");
+  row.innerHTML = "";
+  st.answer.forEach((tok, pos) => {
+    const span = document.createElement("span");
+    span.className = "letter placed";
+    if(st.positionScored[pos] && tok.classAfterCheck){
+      span.classList.add(tok.classAfterCheck);
+    }
+    span.textContent = tok.letter;
+    span.tabIndex = 0;
+    span.onclick = () => {
+      if(state[current].solved) return;
+      state[current].answer.splice(pos,1);
+      state[current].bank.push(tok);
+      drawAnswer();
+      drawBank();
+      document.getElementById("feedback").textContent = "";
+    };
+    row.appendChild(span);
+  });
+  const remaining = questions[current].word.length - st.answer.length;
+  for(let i=0;i<remaining;i++){
+    const slot = document.createElement("span");
+    slot.className = "slot-empty";
+    row.appendChild(slot);
+  }
+}
+
+function drawBank(){
+  const st = state[current];
+  const row = document.getElementById("bankRow");
+  row.innerHTML = "";
+  st.bank.forEach((tok) => {
+    const span = document.createElement("span");
+    span.className = "letter";
+    span.textContent = tok.letter;
+    span.tabIndex = 0;
+    span.onclick = () => {
+      if(state[current].solved) return;
+      state[current].answer.push(tok);
+      state[current].bank = state[current].bank.filter(t=>t!==tok);
+      drawAnswer();
+      drawBank();
+      document.getElementById("feedback").textContent = "";
+    };
+    row.appendChild(span);
+  });
+}
+
+function checkAnswer(){
+  const q = questions[current];
+  const st = state[current];
+  const fb = document.getElementById("feedback");
+
+  if(st.answer.length < q.word.length){
+    fb.textContent = "Coloca todas las letras antes de verificar.";
+    fb.className = "feedback bad";
+    return;
+  }
+
+  let allCorrect = true;
+  st.answer.forEach((tok, pos) => {
+    const isCorrect = tok.letter === q.word[pos];
+    if(!isCorrect) allCorrect = false;
+    if(isCorrect && !st.positionScored[pos]){
+      st.positionScored[pos] = true;
+      totalScore += 1;
+    }
+    tok.classAfterCheck = isCorrect ? "correct" : "wrong";
+  });
+
+  if(allCorrect && !st.bonusGiven){
+    st.bonusGiven = true;
+    totalScore += 5;
+    st.solved = true;
+    fb.textContent = "Muy bien! Palabra completa correcta. +5 de bono!";
+    fb.className = "feedback ok";
+  } else if(allCorrect){
+    fb.textContent = "Correcto!";
+    fb.className = "feedback ok";
+    st.solved = true;
+  } else {
+    fb.textContent = "Algunas letras no estan en el lugar correcto. Intenta de nuevo.";
+    fb.className = "feedback bad";
+  }
+
+  scoreEl.textContent = totalScore;
+  drawAnswer();
+}
+
+function resetQuestion(){
+  const q = questions[current];
+  const st = state[current];
+  st.bank = shuffle(q.word.split("").map((c,i)=>({letter:c,id:i})));
+  st.answer = [];
+  document.getElementById("feedback").textContent = "";
+  drawAnswer();
+  drawBank();
+}
+
+function pickEnglishVoice(){
+  try{
+    const voices = speechSynthesis.getVoices() || [];
+    const enVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith("en"));
+    if(enVoices.length === 0) return null;
+    const preferred = enVoices.find(v => /US|United States/i.test(v.name) || /en-US/i.test(v.lang));
+    const natural = enVoices.find(v => /Google|Natural|Online|Neural/i.test(v.name));
+    return natural || preferred || enVoices[0];
+  }catch(e){ return null; }
+}
+
+function speakWord(){
+  const q = questions[current];
+  const text = q.word.charAt(0) + q.word.slice(1).toLowerCase();
+  try{
+    speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = "en-US";
+    utter.rate = 0.6;
+    utter.pitch = 1;
+    const voice = pickEnglishVoice();
+    if(voice) utter.voice = voice;
+    speechSynthesis.speak(utter);
+  }catch(e){}
+}
+
+// algunos navegadores cargan las voces de forma asincrona
+if(typeof speechSynthesis !== "undefined"){
+  speechSynthesis.onvoiceschanged = () => { /* voces listas */ };
+}
+
+prevBtn.onclick = () => { if(current>0){ current--; render(); } };
+nextBtn.onclick = () => { if(current<questions.length-1){ current++; render(); } };
+
+function tick(){
+  const secs = Math.floor((Date.now()-startTime)/1000);
+  const m = Math.floor(secs/60);
+  const s = secs%60;
+  timerEl.textContent = m + ":" + (s<10?"0":"") + s;
+}
+setInterval(tick, 1000);
+
+render();
+</script>
